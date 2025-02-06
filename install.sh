@@ -9,16 +9,16 @@ SCRIPT_PATH="$(realpath "$0")"
 # Перевірка статусу контейнера
 STATUS=$(docker inspect -f '{{.State.Status}}' $CONTAINER_NAME 2>/dev/null)
 
-if [ "$STATUS" == "running" ]; then
-  echo "Контейнер $CONTAINER_NAME працює."
-else
-  echo "Контейнер $CONTAINER_NAME зупинений. Спробую перезапустити..."
+if [ "$STATUS" != "running" ]; then
+  echo "Контейнер $CONTAINER_NAME не працює (статус: $STATUS). Спробую перезапустити..."
   docker start $CONTAINER_NAME
   if [ $? -eq 0 ]; then
     echo "Контейнер $CONTAINER_NAME успішно перезапущено."
   else
     echo "Не вдалося перезапустити контейнер $CONTAINER_NAME."
   fi
+else
+  echo "Контейнер $CONTAINER_NAME працює."
 fi
 
 # Додавання скрипту в cron, якщо ще не додано
